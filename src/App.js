@@ -29,10 +29,10 @@ const App = () => {
     try {
       const [currentResponse, forecastResponse] = await Promise.all([
         axios.get(
-          `http://api.weatherapi.com/v1/current.json?key=eee08b80e0f34a6c8b5112133250906&q=${cityName}&aqi=no`
+          `https://api.weatherapi.com/v1/current.json?key=eee08b80e0f34a6c8b5112133250906&q=${encodeURIComponent(cityName)}&aqi=no&lang=fr`
         ),
         axios.get(
-          `http://api.weatherapi.com/v1/forecast.json?key=eee08b80e0f34a6c8b5112133250906&q=${cityName}&days=7&aqi=no`
+          `https://api.weatherapi.com/v1/forecast.json?key=eee08b80e0f34a6c8b5112133250906&q=${encodeURIComponent(cityName)}&days=7&aqi=no&lang=fr`
         )
       ]);
       
@@ -41,8 +41,20 @@ const App = () => {
       addToRecentSearches(cityName);
       setError('');
     } catch (error) {
-      setError('Ville non trouvée. Veuillez réessayer.');
       console.error('Error:', error);
+      if (error.response) {
+        // Erreur de l'API
+        if (error.response.status === 400) {
+          setError('Ville non trouvée. Veuillez vérifier l\'orthographe.');
+        } else {
+          setError('Erreur lors de la récupération des données météo. Veuillez réessayer.');
+        }
+      } else if (error.request) {
+        // Erreur réseau
+        setError('Impossible de se connecter au service météo. Veuillez vérifier votre connexion.');
+      } else {
+        setError('Une erreur inattendue s\'est produite. Veuillez réessayer.');
+      }
     }
     setLoading(false);
   }

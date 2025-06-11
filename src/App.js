@@ -6,7 +6,7 @@ import './App.scss';
 const App = () => {
   const [currentData, setCurrentData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState('kinshasa');
   const [recentSearches, setRecentSearches] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

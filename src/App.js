@@ -3,10 +3,12 @@ import axios from 'axios';
 import Card from './components/Card';
 import './App.scss';
 
+const DEFAULT_CITY = 'Kinshasa';
+
 const App = () => {
   const [currentData, setCurrentData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
-  const [city, setCity] = useState('kinshasa');
+  const [city, setCity] = useState('');
   const [recentSearches, setRecentSearches] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,8 +78,18 @@ const App = () => {
     if (savedSearches) {
       setRecentSearches(JSON.parse(savedSearches));
     }
-    fetchWeather('Paris');
+    
+    // Récupérer la dernière ville recherchée du localStorage ou utiliser la ville par défaut
+    const lastCity = localStorage.getItem('lastCity') || DEFAULT_CITY;
+    fetchWeather(lastCity);
   }, []);
+
+  // Sauvegarder la dernière ville recherchée
+  useEffect(() => {
+    if (currentData && currentData.location) {
+      localStorage.setItem('lastCity', currentData.location.name);
+    }
+  }, [currentData]);
 
   return (
     <div className="app-container">
